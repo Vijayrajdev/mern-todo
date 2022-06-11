@@ -1,5 +1,7 @@
+import React from "react";
+
 const Main = () => {
-  return <div className="min-h-screen"></div>;
+  return <div class="min-h-screen"></div>;
 };
 
 export default Main;
