@@ -28,7 +28,7 @@ const Header = () => {
                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                   {/*header*/}
                   <div className="flex items-center justify-between p-5 md:m-4 border-b border-solid border-slate-200 rounded-t">
-                    <h3 className="text-md md:text-3xl font-semibold">
+                    <h3 className="text-md md:text-3xl md:w-96 font-semibold">
                       Login into your account🚀
                     </h3>
                     <button
@@ -112,7 +112,7 @@ const Header = () => {
                 <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                   {/*header*/}
                   <div className="flex items-center justify-between p-4 md:m-4 border-b border-solid border-slate-200 rounded-t">
-                    <h3 className="text-md md:text-3xl font-semibold">
+                    <h3 className="text-md md:text-3xl md:w-96 font-semibold">
                       Register for new account⚡
                     </h3>
                     <button
