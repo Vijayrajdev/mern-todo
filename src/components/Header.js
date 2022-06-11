@@ -6,6 +6,22 @@ const Header = () => {
   const [SignInModal, setSignInModal] = React.useState(false);
   const [SignUpModal, setSignUpModal] = React.useState(false);
 
+  const [username, setUsername] = React.useState("");
+  const [useremail, setUseremail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
+  const Register = (e) => {
+    setSignUpModal(false);
+    e.preventDefault();
+    fetch("http://localhost:4000/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, useremail, password }),
+    });
+  };
+
   const signUpModal = () => {
     setSignInModal(false);
     setSignUpModal(true);
@@ -126,7 +142,10 @@ const Header = () => {
                   {/*body*/}
                   <div className="relative p-6 flex-auto md:m-2">
                     <div className="mb-6">
-                      <form className="flex flex-col gap-2 md:gap-4" action="">
+                      <form
+                        onSubmit={Register}
+                        className="flex flex-col gap-2 md:gap-4"
+                      >
                         <label className="text-sm md:text-md font-semibold">
                           Name
                         </label>
@@ -135,6 +154,7 @@ const Header = () => {
                           placeholder="Jhon Doe"
                           type="name"
                           name="name"
+                          onChange={(e) => setUsername(e.target.value)}
                         />
                         <label className="text-sm md:text-md font-semibold">
                           Email
@@ -144,6 +164,7 @@ const Header = () => {
                           placeholder="User@mail.com"
                           type="email"
                           name="email"
+                          onChange={(e) => setUseremail(e.target.value)}
                         />
                         <label className="text-sm md:text-md font-semibold">
                           Password
@@ -153,6 +174,7 @@ const Header = () => {
                           placeholder="Password"
                           type="password"
                           name="password"
+                          onChange={(e) => setPassword(e.target.value)}
                         />
                       </form>
                     </div>
@@ -181,8 +203,8 @@ const Header = () => {
                     </button>
                     <button
                       class="border rounded border-green-500 bg-white text-sm md:text-md px-4 py-2 text-green-500  hover:bg-green-300 hover:text-black cursor-pointer"
-                      type="button"
-                      onClick={() => setSignUpModal(false)}
+                      type="submit"
+                      onClick={Register}
                     >
                       Register
                     </button>
