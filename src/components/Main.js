@@ -3,6 +3,7 @@ import { BsPlusCircle } from "react-icons/bs";
 import { MdOutlineClose } from "react-icons/md";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
+import "animate.css";
 
 // Select component
 const animatedComponents = makeAnimated();
@@ -15,7 +16,7 @@ const options = [
 const Main = () => {
   const [TodoModal, setTodoModal] = React.useState(false);
   return (
-    <div class=" min-h-screen md:min-h-[80vh] p-4 md:max-w-5xl mx-auto">
+    <div class="min-h-screen md:min-h-[80vh] p-4 md:max-w-5xl mx-auto">
       {/* TODO MODAL */}
       <>
         {TodoModal ? (
@@ -94,12 +95,12 @@ const Main = () => {
         <BsPlusCircle />
       </button>
       <div>
-        <div className="flex items-center justify-center my-6 text-xl md:text-3xl font-semibold ">
+        <div className="flex animate__animated animate__jackInTheBox items-center justify-center my-6 text-xl md:text-3xl font-semibold ">
           <h1>Welcome Username</h1>
         </div>
         <div className="border-b my-6" />
         <div class="flex items-center justify-between">
-          <p class="text-xl">Your tasks</p>
+          <p class="text-2xl">Your tasks</p>
           <Select
             closeMenuOnSelect={false}
             components={animatedComponents}

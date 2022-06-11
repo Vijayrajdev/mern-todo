@@ -17,7 +17,7 @@ const Header = () => {
   };
 
   return (
-    <div>
+    <div class="bg-white">
       {/* SIGN IN MODAL */}
       <>
         {SignInModal ? (
