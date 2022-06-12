@@ -45,12 +45,22 @@ const Footer = () => {
             </ul>
           </div>
           <hr class="my-6 border-gray-200 sm:mx-auto 00 lg:my-8" />
-          <span class="block text-sm text-gray-500 sm:text-center ">
+          <span class="block text-sm text-gray-500 sm:text-center pb-2 ">
             © 2022{" "}
             <a href="/" target="_blank" class="hover:underline">
               To™
             </a>
             . All Rights Reserved.
+          </span>
+          <span class="block text-sm text-gray-500 sm:text-center ">
+            Made with ❤️ by
+            <a
+              href="https://vijayraj.netlify.app/"
+              target="_blank"
+              class="hover:underline text-green-400"
+            >
+              Vijay
+            </a>
           </span>
         </footer>
       </div>

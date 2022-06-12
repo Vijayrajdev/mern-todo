@@ -13,7 +13,7 @@ const Task = () => {
   const [filter, setFilter] = useState("complete");
 
   const persist = (newTask) => {
-    fetch("http://localhost:4000/task", {
+    fetch("https://mern-to-api.herokuapp.com/task", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,7 +24,7 @@ const Task = () => {
   };
 
   useEffect(() => {
-    fetch("http://localhost:4000/task", {
+    fetch("https://mern-to-api.herokuapp.com/task", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

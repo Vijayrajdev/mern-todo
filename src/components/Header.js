@@ -27,7 +27,7 @@ const Header = () => {
   const Register = (e) => {
     // setSignUpModal(false);
     e.preventDefault();
-    fetch("http://localhost:4000/register", {
+    fetch("https://mern-to-api.herokuapp.com/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +52,7 @@ const Header = () => {
   // SIGN IN
   const Login = (e) => {
     e.preventDefault();
-    fetch("http://localhost:4000/login", {
+    fetch("https://mern-to-api.herokuapp.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
