@@ -1,17 +1,31 @@
-import React from "react";
+import React, { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import logo from "../source/App_logo.svg";
 import { MdOutlineClose } from "react-icons/md";
+import { CredentialContext } from "../App";
+
+export const handleErrors = async (response) => {
+  if (!response.ok) {
+    const { message } = await response.json();
+    console.log("message", message);
+    throw Error(message);
+  }
+  return response.json();
+};
 
 const Header = () => {
   const [SignInModal, setSignInModal] = React.useState(false);
   const [SignUpModal, setSignUpModal] = React.useState(false);
-
   const [username, setUsername] = React.useState("");
   const [useremail, setUseremail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
+  const [credentials, setcredentials] = useContext(CredentialContext);
 
+  // SIGN UP
   const Register = (e) => {
-    setSignUpModal(false);
+    // setSignUpModal(false);
     e.preventDefault();
     fetch("http://localhost:4000/register", {
       method: "POST",
@@ -19,7 +33,50 @@ const Header = () => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({ username, useremail, password }),
-    });
+    })
+      .then(handleErrors)
+      .catch((error) => {
+        setError(error.message);
+      })
+      .then((error) =>
+        !error
+          ? null
+          : navigate(
+              "/welcome",
+              setcredentials({ username, useremail, password }),
+              setSignUpModal(false)
+            )
+      );
+  };
+
+  // SIGN IN
+  const Login = (e) => {
+    e.preventDefault();
+    fetch("http://localhost:4000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, useremail, password }),
+    })
+      .then(handleErrors)
+      .catch((error) => {
+        setError(error.message);
+      })
+      .then((error) =>
+        !error
+          ? null
+          : navigate(
+              "/welcome",
+              setcredentials({ username, useremail, password }),
+              setSignInModal(false)
+            )
+      );
+  };
+
+  // Logout
+  const Logout = () => {
+    setcredentials(null);
   };
 
   const signUpModal = () => {
@@ -58,15 +115,19 @@ const Header = () => {
                   {/*body*/}
                   <div className="relative p-6 flex-auto md:m-2">
                     <div className="mb-6">
-                      <form className="flex flex-col gap-2 md:gap-4" action="">
+                      <form
+                        onSubmit={Login}
+                        className="flex flex-col gap-2 md:gap-4"
+                      >
                         <label className="text-sm md:text-md font-semibold">
-                          Email
+                          Username
                         </label>
                         <input
                           className="border rounded p-1 placeholder:text-sm md:p-2  outline-green-200"
-                          placeholder="User@mail.com"
-                          type="email"
-                          name="email"
+                          placeholder="Jhon doe"
+                          type="name"
+                          name="name"
+                          onChange={(e) => setUsername(e.target.value)}
                         />
                         <label className="text-sm md:text-md font-semibold">
                           Password
@@ -76,6 +137,7 @@ const Header = () => {
                           placeholder="Password"
                           type="password"
                           name="password"
+                          onChange={(e) => setPassword(e.target.value)}
                         />
                       </form>
                     </div>
@@ -91,6 +153,9 @@ const Header = () => {
                       >
                         Create one
                       </button>
+                      {error ? (
+                        <h1 className="text-sm text-red-500">{error}</h1>
+                      ) : null}
                     </div>
                   </div>
                   {/*footer*/}
@@ -104,8 +169,8 @@ const Header = () => {
                     </button>
                     <button
                       class="border rounded border-green-500 bg-white text-sm md:text-md px-4 py-2 text-green-500  hover:bg-green-300 hover:text-black cursor-pointer"
-                      type="button"
-                      onClick={() => setSignInModal(false)}
+                      type="submit"
+                      onClick={Login}
                     >
                       Login
                     </button>
@@ -190,6 +255,9 @@ const Header = () => {
                       >
                         Sign In
                       </button>
+                      {error ? (
+                        <h1 className="text-sm text-red-500">{error}</h1>
+                      ) : null}
                     </div>
                   </div>
                   {/*footer*/}
@@ -218,25 +286,39 @@ const Header = () => {
       </>
 
       <div class="flex justify-between items-center px-4 shadow">
-        <div class="h-20 w-20 md:h-30 md:w-30">
-          <img src={logo} alt="" srcset="" />
+        <div class="h-20 w-20 md:h-30 md:w-30 cursor-pointer">
+          <a href="/">
+            <img src={logo} alt="" srcset="" />
+          </a>
         </div>
-        <div class="flex gap-4 md:gap-6">
-          <button
-            type="button"
-            onClick={() => setSignUpModal(true)}
-            class="hidden md:flex border border-slate-100 rounded bg-slate-100 text-sm md:text-md px-4 py-2 text-black hover:text-green-400 cursor-pointer"
-          >
-            Sign Up
-          </button>
-          <button
-            type="button"
-            onClick={() => setSignInModal(true)}
-            class="border rounded border-green-500 bg-white text-sm md:text-md px-4 py-2 text-green-500  hover:bg-green-300 hover:text-black cursor-pointer"
-          >
-            Sign In
-          </button>
-        </div>
+        {!credentials ? (
+          <div class="flex gap-4 md:gap-6">
+            <button
+              type="button"
+              onClick={() => setSignUpModal(true)}
+              class="hidden md:flex border border-slate-100 rounded bg-slate-100 text-sm md:text-md px-4 py-2 text-black hover:text-green-400 cursor-pointer"
+            >
+              Sign Up
+            </button>
+            <button
+              type="button"
+              onClick={() => setSignInModal(true)}
+              class="border rounded border-green-500 bg-white text-sm md:text-md px-4 py-2 text-green-500  hover:bg-green-300 hover:text-black cursor-pointer"
+            >
+              Sign In
+            </button>
+          </div>
+        ) : (
+          <a href="/">
+            <button
+              onClick={Logout}
+              type="button"
+              class="border rounded border-green-500 bg-white text-sm md:text-md px-4 py-2 text-green-500  hover:bg-green-300 hover:text-black cursor-pointer"
+            >
+              Logout
+            </button>
+          </a>
+        )}
       </div>
     </div>
   );

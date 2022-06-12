@@ -1,23 +1,90 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { BsPlusCircle } from "react-icons/bs";
 import { MdOutlineClose } from "react-icons/md";
-import Select from "react-select";
-import makeAnimated from "react-select/animated";
 import "animate.css";
+import { CredentialContext } from "../App";
 
-// Select component
-const animatedComponents = makeAnimated();
-
-const options = [
-  { value: "Completed", label: "complete" },
-  { value: "Uncompleted", label: "uncomplete" },
-];
-
-const Main = () => {
+const Task = () => {
+  const [credentials] = useContext(CredentialContext);
   const [TodoModal, setTodoModal] = React.useState(false);
+  const [task, setTask] = useState("");
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskDesc, setTaskDesc] = useState("");
+  const [filter, setFilter] = useState("complete");
+
+  const persist = (newTask) => {
+    fetch("http://localhost:4000/task", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${credentials.username}:${credentials.password}`,
+      },
+      body: JSON.stringify(newTask),
+    }).then(() => {});
+  };
+
+  useEffect(() => {
+    fetch("http://localhost:4000/task", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${credentials.username}:${credentials.password}`,
+      },
+    })
+      .then((res) => res.json())
+      .then((tasks) => setTask(tasks));
+  }, []);
+
+  const addTask = (e) => {
+    e.preventDefault();
+    setTodoModal(false);
+    const newTask = {
+      checked: false,
+      title: taskTitle,
+      description: taskDesc,
+    };
+    const newTasks = [...task, newTask];
+    setTask(newTasks);
+    persist(newTasks);
+  };
+
+  const toggleTask = (id) => {
+    const newTaskList = [...task];
+    const taskItem = newTaskList.find((tasks) => tasks._id === id);
+    taskItem.checked = !taskItem.checked;
+    setTask(newTaskList);
+    persist(newTaskList);
+  };
+
+  const getTask = () => {
+    const Task = task.filter((tasks) =>
+      filter === "complete" ? tasks.checked : !tasks.checked
+    );
+    return Task;
+  };
+
+  const changeFilter = (newFilter) => {
+    setFilter(newFilter);
+  };
+
   return (
-    <div class="min-h-screen md:min-h-[80vh] p-4 md:max-w-5xl mx-auto">
-      {/* TODO MODAL */}
+    <div>
+      <div>
+        <div className="flex animate__animated animate__jackInTheBox items-center justify-center my-6 text-xl md:text-3xl font-semibold ">
+          <h1>Welcome {credentials && credentials.username}</h1>
+        </div>
+        <div className="border-b my-6" />
+        <div class="flex items-center justify-between">
+          <p class="text-2xl">Your tasks</p>
+          <select
+            className="px-4 py-2 border rounded outline-green-300"
+            onChange={(e) => changeFilter(e.target.value)}
+          >
+            <option value="complete">Completed</option>
+            <option value="uncomplete">Uncompleted</option>
+          </select>
+        </div>
+      </div>
       <>
         {TodoModal ? (
           <>
@@ -41,7 +108,10 @@ const Main = () => {
                   {/*body*/}
                   <div className="relative p-6 flex-auto md:m-2">
                     <div className="mb-6">
-                      <form className="flex flex-col gap-2 md:gap-4" action="">
+                      <form
+                        onSubmit={addTask}
+                        className="flex flex-col gap-2 md:gap-4"
+                      >
                         <label className="text-sm md:text-md font-semibold">
                           Title
                         </label>
@@ -50,6 +120,7 @@ const Main = () => {
                           placeholder="Task title"
                           type="title"
                           name="title"
+                          onChange={(e) => setTaskTitle(e.target.value)}
                         />
                         <label className="text-sm md:text-md font-semibold">
                           Description
@@ -59,6 +130,7 @@ const Main = () => {
                           placeholder="Description"
                           type="description"
                           name="description"
+                          onChange={(e) => setTaskDesc(e.target.value)}
                         />
                       </form>
                     </div>
@@ -75,7 +147,7 @@ const Main = () => {
                     <button
                       class="border rounded border-green-500 bg-white text-sm md:text-md px-4 py-2 text-green-500  hover:bg-green-300 hover:text-black cursor-pointer"
                       type="button"
-                      onClick={() => setTodoModal(false)}
+                      onClick={addTask}
                     >
                       Save
                     </button>
@@ -94,62 +166,32 @@ const Main = () => {
       >
         <BsPlusCircle />
       </button>
-      <div>
-        <div className="flex animate__animated animate__jackInTheBox items-center justify-center my-6 text-xl md:text-3xl font-semibold ">
-          <h1>Welcome Username</h1>
-        </div>
-        <div className="border-b my-6" />
-        <div class="flex items-center justify-between">
-          <p class="text-2xl">Your tasks</p>
-          <Select
-            closeMenuOnSelect={false}
-            components={animatedComponents}
-            defaultValue={options[0]}
-            isMulti
-            options={options}
-          />
-        </div>
-      </div>
-
       <div class="flex flex-col gap-6 my-4">
-        <div class="flex items-center justify-start gap-8">
-          <input class="bg-green-400" type="checkbox" name="" id="" />
-          <div class="flex flex-col gap-1">
-            <h1 class="text-lg font-semibold">Task 1</h1>
-            <p class="text-sm font-thin text-slate-500">Description</p>
-          </div>
-        </div>
-        <div class="flex items-center justify-start gap-8">
-          <input type="checkbox" name="" id="" />
-          <div class="flex flex-col gap-1">
-            <h1 class="text-lg font-semibold">Task 1</h1>
-            <p class="text-sm font-thin text-slate-500">Description</p>
-          </div>
-        </div>
-        <div class="flex items-center justify-start gap-8">
-          <input type="checkbox" name="" id="" />
-          <div class="flex flex-col gap-1">
-            <h1 class="text-lg font-semibold">Task 1</h1>
-            <p class="text-sm font-thin text-slate-500">Description</p>
-          </div>
-        </div>
-        <div class="flex items-center justify-start gap-8">
-          <input type="checkbox" name="" id="" />
-          <div class="flex flex-col gap-1">
-            <h1 class="text-lg font-semibold">Task 1</h1>
-            <p class="text-sm font-thin text-slate-500">Description</p>
-          </div>
-        </div>
-        <div class="flex items-center justify-start gap-8">
-          <input type="checkbox" name="" id="" />
-          <div class="flex flex-col gap-1">
-            <h1 class="text-lg font-semibold">Task 1</h1>
-            <p class="text-sm font-thin text-slate-500">Description</p>
-          </div>
-        </div>
+        {task ? (
+          getTask().map((task) => (
+            <div class="flex items-center justify-start gap-8" key={task._id}>
+              <input
+                class="bg-green-400"
+                checked={task.checked}
+                id={task._id}
+                type="checkbox"
+                name=""
+                onChange={() => toggleTask(task._id)}
+              />
+              <label class="flex flex-col gap-1" for={task._id}>
+                <h1 class="text-lg font-semibold">{task.title}</h1>
+                <p class="text-sm font-thin text-slate-500">
+                  {task.description}
+                </p>
+              </label>
+            </div>
+          ))
+        ) : (
+          <p>You've no todos</p>
+        )}
       </div>
     </div>
   );
 };
 
-export default Main;
+export default Task;
